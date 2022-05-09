@@ -1,21 +1,18 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { View } from "react-native";
+import { theme } from "./src/theme";
+import { Widget } from "./src/components/widget";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <Text>A mozi é linda</Text>
-      <StatusBar style="auto" />
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.background,
+      }}
+    >
+      <Widget />
+      <StatusBar style="light" backgroundColor="transparent" translucent />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
