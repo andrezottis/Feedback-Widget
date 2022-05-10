@@ -7,6 +7,11 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { gestureHandlerRootHOC } from "react-native-gesture-handler";
 import symbolicateStackTrace from "react-native/Libraries/Core/Devtools/symbolicateStackTrace";
 import { Options } from "../options";
+import {Form} from "../form"
+import {feedbackTypes } from '../../utils/feedbackTypes'
+
+export type feedbackType = keyof typeof feedbackTypes;
+
 
 function Widget() {
 const bottomSheetRef = useRef<BottomSheet>(null);
@@ -30,7 +35,7 @@ function handleOpen(){
       snapPoints={[1,280]}
       backgroundStyle={styles.modal}
       handleIndicatorStyle={styles.indicator}>
-        <Options />
+        <Form feedbackTypeForm="BUG" />
       </BottomSheet>
     </>
   );
