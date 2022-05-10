@@ -5,6 +5,8 @@ import { ChatTeardropDots } from "phosphor-react-native";
 import { theme } from "../../theme";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { gestureHandlerRootHOC } from "react-native-gesture-handler";
+import symbolicateStackTrace from "react-native/Libraries/Core/Devtools/symbolicateStackTrace";
+import { Options } from "../options";
 
 function Widget() {
 const bottomSheetRef = useRef<BottomSheet>(null);
@@ -25,8 +27,10 @@ function handleOpen(){
       </TouchableOpacity>
       <BottomSheet
       ref={bottomSheetRef}
-      snapPoints={[1,280]}>
-
+      snapPoints={[1,280]}
+      backgroundStyle={styles.modal}
+      handleIndicatorStyle={styles.indicator}>
+        <Options />
       </BottomSheet>
     </>
   );
