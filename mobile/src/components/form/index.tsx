@@ -8,6 +8,8 @@ import { feedbackType } from "../widget";
 import { ScreenshotButton } from "../screenshotButton";
 import { Button } from "../button";
 import { feedbackTypes } from "../../utils/feedbackTypes";
+import { api } from "../../libs/api";
+import * as FileSystem from 'expo-file-system'
 
 interface Props {
   feedbackTypeForm: feedbackType;
@@ -17,13 +19,14 @@ interface Props {
 
 export function Form({ feedbackTypeForm, onFeedbackSent, onFeedbackCanceled }: Props) {
   const [screenshot, setScreenshot] = useState<string | null> (null);
-
+  const [isSendingFeedback, setIsSendingFeedback] = useState(false);
+  const [comment, setComment] = useState("");
   const feedbackTypeInfo = feedbackTypes[feedbackTypeForm];
 
 
   function handleScreeshot(){
     captureScreen({
-      format:'jpg',
+      format:'png',
       quality:0.8
     }).then(uri => setScreenshot(uri))
     .catch(error => console.log(error))
@@ -31,6 +34,28 @@ export function Form({ feedbackTypeForm, onFeedbackSent, onFeedbackCanceled }: P
 
   function handleScreeshotRemove(){
     setScreenshot(null);
+  }
+
+  async function handleSendFeedback (){
+    if(isSendingFeedback){
+      return;
+    }
+    setIsSendingFeedback(true);
+    const screenshotBase64 = screenshot && await FileSystem.readAsStringAsync(screenshot, {encoding: 'base64'});
+
+
+    try {
+      await api.post('/feedbacks', {
+        type: feedbackTypeForm,
+        comment,
+        screenshot: `data:image/png;base64, ${screenshotBase64}`,
+      });
+
+      onFeedbackSent();
+    } catch (error) {
+      console.log(error);
+      setIsSendingFeedback(false);
+    }
   }
 
   return (
@@ -53,6 +78,7 @@ export function Form({ feedbackTypeForm, onFeedbackSent, onFeedbackCanceled }: P
         style={styles.input}
         placeholder="Algo não está funcionando bem? Queremos corrigir. Conte com detalhes o que está acontecendo..."
         placeholderTextColor={theme.colors.text_secondary}
+        onChangeText={setComment}
       />
       <View style={styles.footer}>
         <ScreenshotButton
@@ -60,7 +86,9 @@ export function Form({ feedbackTypeForm, onFeedbackSent, onFeedbackCanceled }: P
           onRemoveShot={handleScreeshotRemove}
           screenshot={screenshot}
         />
-        <Button isLoading={false} />
+        <Button 
+        onPress={handleSendFeedback}
+        isLoading={isSendingFeedback} />
       </View>
     </View>
   );
